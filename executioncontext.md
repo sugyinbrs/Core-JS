@@ -7,10 +7,10 @@
 - 목차
 
 1. 실행 컨텍스트  
-   1-1. 실행 컨텍스트의 의미  
-   1-2. 실행 컨텍스트 코드 예시와 콜스택  
-   1-3. 실행 컨텍스트 내부 (환경 정보)
-2. 실행 컨텍스트 정리
+   1-1. [실행 컨텍스트의 의미](https://github.com/sugyinbrs/Core-JS/edit/main/executioncontext.md#1-1-%EC%8B%A4%ED%96%89-%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8%EC%9D%98-%EC%9D%98%EB%AF%B8)  
+   1-2. [실행 컨텍스트 코드 예시와 콜스택](https://github.com/sugyinbrs/Core-JS/edit/main/executioncontext.md#1-2-%EC%8B%A4%ED%96%89-%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8-%EC%BD%94%EB%93%9C-%EC%98%88%EC%8B%9C%EC%99%80-%EC%BD%9C%EC%8A%A4%ED%83%9D)  
+   1-3. [실행 컨텍스트 내부 (환경 정보)](https://github.com/sugyinbrs/Core-JS/edit/main/executioncontext.md#1-3-%EC%8B%A4%ED%96%89-%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8-%EB%82%B4%EB%B6%80-%ED%99%98%EA%B2%BD-%EC%A0%95%EB%B3%B4)
+2. [실행 컨텍스트 정리](https://github.com/sugyinbrs/Core-JS/edit/main/executioncontext.md#2-%EC%8B%A4%ED%96%89-%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8-%EC%A0%95%EB%A6%AC)
 
 </br>
 </br>
@@ -72,9 +72,11 @@
 3. `함수` - 결국 `자바스크립트의 독립된 코드뭉치`라고 할 수 있는 것은 `함수`라고 볼 수 있음
 
 </br>
+</br>
 
-> 즉, `전역 공간, 모듈, 또는 함수로 묶인 내부`에서는 결국 `"같은 환경 안에 있다"` 라는 것이 성립한다.  
-> </br> > `자바스크립트`는 오직 `함수에 의해서만 컨텍스트를 구분`할 수 있다.
+즉, `전역 공간, 모듈, 또는 함수로 묶인 내부`에서는 결국 `"같은 환경 안에 있다"` 라는 것이 성립한다.  
+
+`자바스크립트`는 오직 `함수에 의해서만 컨텍스트를 구분`할 수 있다.
 
 </br>
 </br>
@@ -280,6 +282,7 @@ b) Lexical Environment (Lexical Environment 위주로 살펴봄)
 a) environmentRecord
 
 - 현재 문맥의 `식별자 정보가 수집`됨 (`실행컨텍스트가 최초 실행 시 제일 먼저 수행`)
+
 - 현재 컨텍스트 `식별자 정보들을 수집`해서 environmentRecord 에 담는 과정을 `"Hoisting"` 으로 생각
   - `Hoisting` 은 실제하는 현상은 아니고 environmentRecord 정보 수집 과정을 쉽게 이해하기 위해 만든 허구의 개념
   - 실행 컨텍스트 맨 위로 `식별자 정보를 끌어올린다` 라는 뜻
@@ -346,10 +349,12 @@ c = function () {
 b) outerEnvironmentReference
 
 - `외부의 환경(Lexical Environment)에 대한 참조`
+
 - 즉, 현재 문맥과 관련 있는 `외부 식별자 정보를 참조`
   - 예를 들어 현재 inner 문맥을 실행 중이라고 하였을 때  
     inner 문맥의 outerEnvironmentReference 는 아래 outer 라고 하는 Lexical Environment를 참조함
   - 마찬가지로 outer 문맥의 outerEnvironmentReference 는 아래 전역컨텍스트의 Lexical Environment 를 참조
+
 - 그로 인해 `Scope Chain` 에 관여하게 됨 (outerEnvironmentReference 에 의해 만들어짐)
   - inner 컨텍스트에서 선언한 변수는 environmentRecord 에 의해 접근 가능,  
     outerEnvironmentReference 에 의해 outer 컨텍스트에서 선언한 변수에도 접근 가능
@@ -357,11 +362,14 @@ b) outerEnvironmentReference
     outerEnvironmentReference 에 의해 전역 컨텍스트에서 선언한 변수에도 접근 가능
   - 반대로 inner 에서 선언한 변수는 outer 컨텍스트에서 접근 불가,  
     outer 에서 선언한 변수는 전역 컨텍스트에서 접근 불가
+    
 - 이것이 `Scope` 임, 외부로는 나갈 수 있으나 자기보다 안쪽으로는 들어갈 수 없음, `변수의 유효범위를 의미`함
   - inner 함수에서 선언한 변수의 유효범위는 inner 함수 내부에만 국한됨
   - outer 함수에서 선언한 변수의 유효범위는 inner 와 outer 임, 전역에서 접근 불가
   - 전역 공간에서 선언한 변수는 outer 와 inner 에서 접근 가능
+
 - 결국 `Scope Chain` 은 inner 에서 `특정 변수를 찾을 때 가장 가까운 자기 자신부터 점점 멀리 있는 스코프로 찾아 나가는 것`
+
 - `가장 먼저 찾아진 것만 접근할 수 있는 개념` 을 `Shadowing` 이라고 함
 
 </br>
