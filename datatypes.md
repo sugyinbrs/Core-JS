@@ -6,10 +6,10 @@
 
 - 목차
 
-1. [데이터 타입의 종류](https://github.com/sugyinbrs/Core-JS/edit/main/datatypes.md#1-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%83%80%EC%9E%85%EC%9D%98-%EC%A2%85%EB%A5%98)
-2. [데이터 타입을 구분하는 이유와 차이](https://github.com/sugyinbrs/Core-JS/edit/main/datatypes.md#2-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%83%80%EC%9E%85%EC%9D%84-%EA%B5%AC%EB%B6%84%ED%95%98%EB%8A%94-%EC%9D%B4%EC%9C%A0%EC%99%80-%EC%B0%A8%EC%9D%B4)  
-   2-1. [기본형 데이터 변경](https://github.com/sugyinbrs/Core-JS/edit/main/datatypes.md#2-1-%EA%B8%B0%EB%B3%B8%ED%98%95-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%B3%80%EA%B2%BD)  
-   2-2. [참조형 데이터 변경](https://github.com/sugyinbrs/Core-JS/edit/main/datatypes.md#2-2-%EC%B0%B8%EC%A1%B0%ED%98%95-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%B3%80%EA%B2%BD)
+1. 데이터 타입의 종류
+2. 데이터 타입을 구분하는 이유와 차이  
+   2-1. 기본형 데이터 변경  
+   2-2. 참조형 데이터 변경
 
 </br>
 </br>
