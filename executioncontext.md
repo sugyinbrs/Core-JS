@@ -7,10 +7,10 @@
 - 목차
 
 1. 실행 컨텍스트  
-   1-1. [실행 컨텍스트의 의미](https://github.com/sugyinbrs/Core-JS/edit/main/executioncontext.md#1-1-%EC%8B%A4%ED%96%89-%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8%EC%9D%98-%EC%9D%98%EB%AF%B8)  
-   1-2. [실행 컨텍스트 코드 예시와 콜스택](https://github.com/sugyinbrs/Core-JS/edit/main/executioncontext.md#1-2-%EC%8B%A4%ED%96%89-%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8-%EC%BD%94%EB%93%9C-%EC%98%88%EC%8B%9C%EC%99%80-%EC%BD%9C%EC%8A%A4%ED%83%9D)  
-   1-3. [실행 컨텍스트 내부 (환경 정보)](https://github.com/sugyinbrs/Core-JS/edit/main/executioncontext.md#1-3-%EC%8B%A4%ED%96%89-%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8-%EB%82%B4%EB%B6%80-%ED%99%98%EA%B2%BD-%EC%A0%95%EB%B3%B4)
-2. [실행 컨텍스트 정리](https://github.com/sugyinbrs/Core-JS/edit/main/executioncontext.md#2-%EC%8B%A4%ED%96%89-%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8-%EC%A0%95%EB%A6%AC)
+   1-1. 실행 컨텍스트의 의미  
+   1-2. 실행 컨텍스트 코드 예시와 콜스택  
+   1-3. 실행 컨텍스트 내부 (환경 정보)
+2. 실행 컨텍스트 정리
 
 </br>
 </br>
