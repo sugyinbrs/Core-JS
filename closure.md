@@ -7,9 +7,8 @@
 - 목차
 
 1. Closure 의 의미  
-   1-1. 특별한 현상이란  
-   2-2. 매개변수  
-2. this 정리
+   1-1. 특별한 현상이란
+2. Closure 의 특징
 
 </br>
 </br>
@@ -296,4 +295,188 @@ outer 에 있는 변수가 사라지지 않고 계속 좀비처럼 살아남고 
 
 </br>
 
-또한 외부로부터 내부 변수를 보호하는 캡슐화 현상도 나타나는 것을 알 수 있다.
+```js
+function user(_name) {
+  var _logged = true;
+  return {
+    get name() {
+      return _name;
+    }, // getter 호출
+    set name(v) {
+      _name = v;
+    },
+    login() {
+      _logged = true;
+    },
+    logout() {
+      _logged = false;
+    },
+    get status() {
+      return _logged ? "login" : "logout";
+    },
+  };
+}
+var sue = user("수");
+```
+
+</br>
+
+```js
+console.log(sue.name); // '수'
+```
+
+    sue 객체에는 name 프로퍼티가 없는 대신 name 에 대한 getter 가 있기 때문에 getter 가 호출됨
+
+    name: (...)
+    statue: (...)
+    > get name: f name() // getter
+    > set name: f name(v)
+
+</br>
+
+    get name() {
+      return _name;
+    },
+
+    에서 _name 변수는 user 함수를 호출할 때 매개변수로 넘겨받은 값을 가지는 user 함수에서 선언된 변수임
+
+    원래대로라면 user 함수의 실행 컨텍스트가 종료됨과 동시에 함께 사라지는 변수였던 것임
+
+    그런데 함수 실행을 종료할 때 return 해줄 내용 안에서 해당 변수를 사용하고 있는 함수가 있어 즉, 참조 카운트가 0 이 아닌 상태이므로 '나중에 쓸 변수' 로 판단하여 살려둠
+
+    그리하여 sue.name 의 값이 '수' 이게 되는 것
+
+</br>
+</br>
+
+```js
+sue.name = "수갱"; // 프로퍼티 값 변경
+console.log(sue.name); // '수갱'
+```
+
+    sue.name 프로퍼티 값을 '수갱' 으로 바꾸려고 함
+
+    > set name 이 발동되어 _name 값이 '수갱' 으로 바뀌게 됨
+
+    name: (...)
+    statue: (...)
+    > get name: f name()
+    > set name: f name(v)
+
+    이어서 get name 호출하면 '수갱' 이 반환됨
+
+</br>
+</br>
+
+```js
+sue._name = "sugy";
+console.log(sue.name); // '수갱'
+```
+
+    sue._name 에 'sugy' 를 할당하는 명령을 낸다고 한다면
+
+    sue 객체에는 _name 프로퍼티가 없음, 새로 만들게 됨
+
+    이 명령에 의해서는 user 함수에서 선언한 _name 변수에는 어떠한 영향도 주지 못하게 됨
+
+    그래서 name getter 호출에 대한 결과는 여전히 '수갱' 이 됨
+
+</br>
+</br>
+
+```js
+console.log(sue.status); // 'login'
+```
+
+    sue 객체에서 getter 인 status 를 호출한다면
+
+    user 함수에서 선언된 _logged 변수의 값에 따라
+
+    'login' 또는 'logout' 이라는 문자열을 반환함
+
+    현재는 true 이기 때문에 'login' 을 출력함
+
+    name: (...)
+    statue: (...)
+    > get name: f name()
+    > set name: f name(v)
+    > get status: f status()
+
+    즉 _logged 변수 역시 클로저에 의해서 좀비가 된 것이 확인됨
+
+</br>
+</br>
+
+```js
+sue.logout();
+console.log(sue.status); // 'logout'
+```
+
+    이 상태에서 logout 메서드를 호출하면,
+
+    좀비변수 _logged 가 false 가 되고
+
+    sue 객체에서 getter 인 status 를 호출한다면
+
+    현재는 false 이기 때문에 'logout' 을 출력함
+
+    name: (...)
+    statue: (...)
+    > get name: f name()
+    > set name: f name(v)
+    > get status: f status()
+
+</br>
+</br>
+
+```js
+sue.status = true;
+console.log(sue.status); // 'logout'
+```
+
+    sue 객체에서 status 라고 하는 프로퍼티의 getter 는 있지만 setter 는 없음
+
+    sue.status 에 true 를 할당하라는 명령을 하면 이 명령은 무시됨
+
+    > {login: f, logout: f}
+      > login: f login()
+      > logout: f logout()
+      name: (...)
+      statue: (...)
+      > get name: f name()
+      > set name: f name(v)
+      > get status: f status()
+
+</br>
+
+위의 기나긴 예제를 통해 알 수 있는 점을 정리해본다면 아래와 같다.
+
+</br>
+
+a) 함수 종료 후에도 사라지지 않고 값을 유지하는 변수
+
+    첫 번째로 _name, 그리고 _logged 라고 하는 두 변수
+
+    => 클로저의 핵심 개념
+
+</br>
+
+b) 외부로부터 내부 변수 보호 (캡슐화)
+
+    get name()
+    set name(v)
+    login()
+    logout()
+    get status()
+
+    외부에 노출된 status 프로퍼티는 getter 로서만 역할을 하며,
+
+    실제 _logged 의 값과는 별개의 문자열 만을 반환해줌
+
+    직접적으로 _logged 의 변화에 영향을 주는 것은
+
+    login/logout 메서드에 의해서만 가능
+
+</br>
+
+## 함수 종료 후에도 사라지지 않는 지역변수를 만들 수 있다!
