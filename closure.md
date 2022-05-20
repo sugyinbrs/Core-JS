@@ -1,6 +1,6 @@
 # Core-JS study
 
-## Callback
+## Closure
 
 </br>
 
