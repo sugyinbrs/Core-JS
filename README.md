@@ -13,3 +13,5 @@
 4. [Callback](https://github.com/sugyinbrs/Core-JS/blob/main/callback.md)
 
 5. [Closure](https://github.com/sugyinbrs/Core-JS/blob/main/closure.md)
+
+6. [Prototype](https://github.com/sugyinbrs/Core-JS/blob/main/prototype.md)
