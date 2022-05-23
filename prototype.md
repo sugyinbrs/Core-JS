@@ -10,6 +10,7 @@
    1-1. Prototype 의 기본 개념 용어와 예시  
    1-2. Prototype 실행 원리 정리  
    1-3. 인스턴스에서 prototype 에 접근하는 방법
+2. 메소드 상속 및 동작 원리
 
 </br>
 </br>
@@ -283,25 +284,217 @@ var sueClone3 = new Object.getPrototypeOf(sue).constructor("수_클론3", 100);
 var sueClone4 = new Person.prototype.constructor("수_클론4", 100);
 ```
 
+</br>
+
     sue 와 sueClone1, 2, 3, 4 는 모두 Person 의 인스턴스가 됨
+
+    <프로퍼티 접근 방식>
 
     모두 동일한 프로퍼티에 접근할 수 있음
 
-    > sueClone1 - sue.__proto__ 에 의해 Person.prototype 에 접근 가능
-    > sueClone2 - sue 의 [[prototype]] 프로퍼티에 의해서 Person.prototype 에 접근 가능
-    > sueClone3 - Object.getPrototypeOf(instance) 메서드에 의해 Person.prototype 에 접근 가능
-    > sueClone4 - Person.prototype 자체가 Person.prototype
+    a) sueClone1 - sue.__proto__ 에 의해 Person.prototype 에 접근 가능
+    b) sueClone2 - sue 의 [[prototype]] 프로퍼티에 의해서 Person.prototype 에 접근 가능
+    c) sueClone3 - Object.getPrototypeOf(instance) 메서드에 의해 Person.prototype 에 접근 가능
+    d) sueClone4 - Person.prototype 자체가 Person.prototype
 
     모두 Person.prototype 을 가리키고 있음
 
-    
-    정리
+    - 정리
 
-    a) instance.__prototype__
+    a) instance.__proto__
     b) instance
     c) Object.getPrototypeOf(instance)
     d) Constructor.prototype
 
     위의 4가지 방법에 의해 생성자 함수의 prototype 이라고 하는 프로퍼티에 접근 가능
 
-    또한 동일한 함수 Person 이라고 하는 생성자 함수를 가리킴
+</br>
+
+    <생성자 함수 접근 방식>
+
+    또한 아래는 동일한 함수 Person 이라고 하는 생성자 함수를 가리킴
+
+    아래의 5가지 방식으로 생성자 함수에 접근
+
+    a) sue - Person
+    b) sueClone1 - sue.__proto__.constructor
+    c) sueClone2 - sue.constructor
+    d) sueClone3 - Object.getPrototypeOf(sue).constructor
+    e) sueClone4 - Person.prototype.constructor
+
+    - 정리
+
+    a) Constructor
+    b) instance.__proto__.constructor
+    c) instance.constructor
+    d) (Object.getPrototypeOf(instance)).constructor
+    e) Constructor.prototype.constructor
+
+</br>
+</br>
+</br>
+
+## 2. 메소드 상속 및 동작 원리
+
+</br>
+</br>
+</br>
+
+```js
+function Person(n, a) {
+  this.name = n;
+  this.age = a;
+}
+
+var sue = new Person("수", 100);
+var suri = new Person("수리", 88);
+```
+
+</br>
+
+    Person 생성자로부터 sue 객체, 그리고 suri 라고 하는 객체 두개의 인스턴스 생성
+
+</br>
+
+```js
+sue.setOlder = function () {
+  this.age += 1;
+};
+sue.getAge = function () {
+  return this.age;
+};
+suri.setOlder = function () {
+  this.age += 1;
+};
+suri.getAge = function () {
+  return this.age;
+};
+```
+
+    각각에 setOlder, getAge 라는 메서드 생성
+
+    근데 sue 와 suri 에 있는 setOlder, getAge 메서드가 모두 동일한 내용으로 이루어져 있음
+
+</br>
+
+## 이런 경우 최대한 반복을 줄여라! DRY (Don't Repeat Yourself) 해라!
+
+</br>
+
+```js
+function Person(n, a) {
+  this.name = n;
+  this.age = a;
+}
+
+Person.prototype.setOlder = function () {
+  this.age += 1;
+};
+
+Person.prototype.getAge = function () {
+  return this.age;
+};
+
+var sue = new Person("수", 100);
+var suri = new Person("수리", 88);
+```
+
+    프로토타입으로 메서드(setOlder, getAge)를 이동시킴
+
+    이러한 방법의 장점으로는 아래와 같다.
+
+    Person --- setOlder() , getAge()
+
+```js
+var sue = new Person("수", 100);
+
+//
+
+sue.setOlder();
+sue.getAge();
+```
+
+    sue {
+      name: '수',
+      age: 100
+    }
+
+    //
+
+    sue {
+      name: '수',
+      age: 101
+    }
+
+```js
+var suri = new Person("수리", 88);
+
+//
+
+suri.setOlder();
+suri.setOlder();
+suri.getAge();
+```
+
+    sue {
+      name: '수리',
+      age: 88
+    }
+
+    //
+
+    sue {
+      name: '수리',
+      age: 90
+    }
+
+```js
+var juni = new Person("주니", 50);
+
+//
+
+juni.setOlder();
+juni.setOlder();
+juni.setOlder();
+juni.getAge();
+```
+
+    sue {
+      name: '주니',
+      age: 50
+    }
+
+    //
+
+    sue {
+      name: '주니',
+      age: 53
+    }
+
+</br>
+
+    <장점>
+
+    1) 메모리 용량 최적화
+
+    위처럼 도장 찍듯 찍어내도 위의 메서드들은 한 번만 만들어 놓은 코드를 다양한 곳에서 참조할 뿐임
+
+    인스턴스들(sue, suri, juni 등)은 저마다의 고유한 정보들'만' 가지고 있으면 됨
+
+    인스턴스들이 모두 똑같이 가지는 정보들은 prototype 으로 보내면 됨
+
+    그럼에도 각 인스턴스들은 마치 자신의 메서드인 것처럼 다양한 명령 수행 가능
+
+    즉, 메모리 용량 최적화 할 수 있다는 장점이 있음
+
+
+    2) 특정 집단의 공통된 속성 파악 (OOP 관점)
+
+    개개인의 이름, 나이 등의 특징은 다르지만
+
+    메서드 setOlder (사람은 모두 나이를 먹고), getAge (각자의 나이를 알 수 있다)
+
+    처럼 뭉뚱그려서 일반화시켜진 이런 특징들은 모두 prototype 으로 설명할 수 있음
+
+    즉, 어떤 객체가 속한 집단의 특징을 알 수 있는 좋은 수단이 됨
+    
