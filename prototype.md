@@ -497,4 +497,188 @@ juni.getAge();
     처럼 뭉뚱그려서 일반화시켜진 이런 특징들은 모두 prototype 으로 설명할 수 있음
 
     즉, 어떤 객체가 속한 집단의 특징을 알 수 있는 좋은 수단이 됨
-    
+
+</br>
+</br>
+</br>
+
+## 3. Prototype Chaining
+
+</br>
+</br>
+</br>
+
+Prototype 프로퍼티 역시 '객체' 이다.
+
+</br>
+
+그래서 Prototype 프로퍼티 역시 Object 생성자 함수의 new 연산으로 생성된 인스턴스라는 말이 되며
+
+</br>
+
+따라서 Object 의 prototype 과 연결 되어 있다.
+
+</br>
+
+![img-12](./img/img-12.png)
+출처 - 인프런 코어자바스크립트
+
+</br>
+
+그러한 이유로 인스턴스는 Object.prototype 에 있는 메서드도 마치 자신의 것처럼 사용할 수 있다.
+
+</br>
+
+이처럼 대각선의 빨간선을 따라서 연결되어 있는 프로토타입들을 일컬어 '프로토타입 체이닝' 이라고 부른다.
+
+</br>
+
+프로토타입은 객체이므로 모든 데이터타입은 이와 동일한 구조를 따른다.
+
+</br>
+
+숫자, 문자열, 배열, 함수든 모두 Object.prototype 과 프로토타입 체인으로 연결되어 있다.
+
+</br>
+</br>
+
+모든 데이터타입에 대해 [[Prototype]] 으로 연결된 Object.prototype 에는
+
+</br>
+
+자바스크립트 전체를 통괄하는 공통된 메서드들이 정의되어 있다.
+
+</br>
+
+![img-13](./img/img-13.png)
+출처 - 인프런 코어자바스크립트
+
+</br>
+
+이들 메서드는 모든 데이터 타입이 프로토타입 체이닝을 통해 접근할 수 있다.
+
+</br>
+
+그렇기 때문에 객체의 프로토타입에는 '객체' 전용 메서드를 정의해둘 수가 없다.
+
+</br>
+
+객체의 프로토타입에 있는 메서드는 모든 데이터 타입에 적용되기 때문이다.
+
+</br>
+
+그 대신 객체 생성자함수(Object.~~~ 로 시작)에 직접 메서드를 정의할 수 밖에 없게 되었다.
+
+</br>
+
+그래서 객체 관련한 명령어들은 객체로부터 직접 메서드를 호출하는 대신에
+
+</br>
+
+    Object.명령어
+
+    예)
+    Object.freeze(obj);
+    Object.keys(obj);
+    Object.values(obj);
+
+</br>
+
+등을 호출하면서 매개변수로 객체 자신을 넘겨주는 방식을 취하는 경우가 많다.
+
+</br>
+
+모두 프로토타입 체인 때문이다.
+
+</br>
+</br>
+
+아무튼 다시 배열로 돌아와서 생각해본다.
+
+</br>
+
+Array.prototype 에는 toString 메서드가 있다.
+
+</br>
+
+```js
+[1, 2, 3].toString();
+```
+
+```js
+"1,2,3";
+```
+
+</br>
+
+배열을 호출하면 각 요소들을 콤마로 나열한 문자열이 출력이 된다.
+
+</br>
+
+그런데 Array.prototype.toString 메서드를 delete 라는 명령어로 지우고 본다면
+
+</br>
+
+```js
+delete Array.prototype.toString;
+```
+
+</br>
+
+```js
+[1, 2, 3].toString();
+```
+
+```js
+"[object Array]";
+```
+
+</br>
+
+[object Array] 라는 문자열이 출력된다.
+
+</br>
+
+그 이유는 Object.prototype 에 toString 이라는 메서드가 있기 때문이다.
+
+</br>
+
+프로토타입 체인을 타고서 호출된 것이다.
+
+</br>
+
+call 메서드로 직접 적용하니 똑같이 나오는 것을 알 수 있다.
+
+</br>
+
+```js
+Object.prototype.toString.call([1, 2, 3]);
+```
+
+```js
+"[object Array]";
+```
+
+</br>
+
+이제는 Object.prototype 에 있는 toString 메서드도 지워본다.
+
+</br>
+
+```js
+delete Object.prototype.toString;
+```
+
+</br>
+
+지우면 toString 이라는 메서드가 없다면서 오류를 보여준다.
+
+</br>
+
+```js
+[1, 2, 3].toString();
+```
+
+    Uncaught TypeError: ~~
+
+</br>
