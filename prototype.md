@@ -438,14 +438,14 @@ suri.setOlder();
 suri.getAge();
 ```
 
-    sue {
+    suri {
       name: '수리',
       age: 88
     }
 
     //
 
-    sue {
+    suri {
       name: '수리',
       age: 90
     }
@@ -461,14 +461,14 @@ juni.setOlder();
 juni.getAge();
 ```
 
-    sue {
+    juni {
       name: '주니',
       age: 50
     }
 
     //
 
-    sue {
+    juni {
       name: '주니',
       age: 53
     }
