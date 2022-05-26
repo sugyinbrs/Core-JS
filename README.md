@@ -15,3 +15,5 @@
 5. [Closure](https://github.com/sugyinbrs/Core-JS/blob/main/closure.md)
 
 6. [Prototype](https://github.com/sugyinbrs/Core-JS/blob/main/prototype.md)
+
+7. [Class](https://github.com/sugyinbrs/Core-JS/blob/main/class.md)
