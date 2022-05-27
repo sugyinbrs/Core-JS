@@ -326,13 +326,13 @@ function Person(name, age) {
   this.age = age || "나이모름";
 }
 
-Person.prototype.getName = function {
+Person.prototype.getName = function () {
   return this.name;
-}
+};
 
-Person.prototype.getAge = function {
+Person.prototype.getAge = function () {
   return this.age;
-}
+};
 
 function Employee(name, age, position) {
   this.name = name || "이름없음";
@@ -342,3 +342,78 @@ function Employee(name, age, position) {
 ```
 
 </br>
+
+이 상태에서 앞서 봤던 내용들을 구현해본다.
+
+</br>
+
+```js
+Employee.prototype = new Person();
+Employee.prototype.constructor = Employee;
+Employee.prototype.getPosition = function () {
+  return this.position;
+};
+```
+
+    맨 아래줄 코드가 아래에 있는 이유는
+
+    맨 위의 Employee.prototype = new Person(); 코드보다
+
+    먼저 상위에서 프로토타입에 어떤 프로퍼티나 메서드를 정의해봤자
+
+    Employee.prototype 참조를 새로운 객체인 new Person 인스턴스로 바꿔치울 것이기 때문에 의미 없게 됨
+
+    따라서 프로토타입을 덮어 씌운 다음에 정의를 할 수 밖에 없음
+
+</br>
+
+위와 같은 상태에서 Employee 의 인스턴스를 생성하고 내용을 출력하면 아래와 같다.
+
+</br>
+
+```js
+var sue = new Employee("수", 100, "dev");
+console.dir(sue);
+```
+
+</br>
+
+![img-21-1](./img/img-21-1.png)
+
+    sue 라는 객체 자신이 갖는 프로퍼티
+
+    sue 객체는 Employee 에 new 연산자를 통해 생성한 Employee 인스턴스
+
+</br>
+
+![img-21-2](./img/img-21-2.png)
+
+    sue 의 [[Prototype]] 영역
+
+    Employee 의 prototype 과 같음
+
+    또한 상속 관계를 부여하는 가장 핵심 포인트였던
+
+    Employee.prototype = new Person() 을 떠올려보면 곧 Person 의 인스턴스임을 알 수 있음
+
+    그래서 age, name 프로퍼티가 보임
+
+    constructor 로는 우리가 부여해준 Employee 가 확인됨
+
+    Employee 인스턴스가 사용할 getPosition 도 보임
+
+</br>
+
+![img-21-3](./img/img-21-3.png)
+
+    sue.__proto__ 에 다시 __proto__ 를 찾아간,
+
+    프로토타입 체이닝을 두 번 건너 뛴 내용
+
+    Person 의 프로토타입
+
+    따라서 constructor 가 Person 생성자 함수를 가리키고 있음
+
+    마지막 줄 [[Prototype]] 에는 Object 가 표시되어 있는데 사실 Object.prototype 을 가리킴
+
+    즉, Person.prototype 은 Object 의 인스턴스가 되는 것임
