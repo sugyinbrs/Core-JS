@@ -447,3 +447,123 @@ console.dir(sue);
     즉, Person.prototype 을 상속 받는 별도의 인스턴스가 있고
 
     그 객체에는 아무런 프로퍼티도 존재하지 않으면 됨
+
+</br>
+
+예를 들어 비어 있는 Bridge 생성자 함수를 만든다고 친다. (Employee 와 Person 생성자 함수 간을 연결한다는 의미로 Bridge 라고 칭함)
+
+</br>
+
+Bridge 의 prototype 에 Person prototype 을 연결한 상태에서 인스턴스를 생성하면
+
+</br>
+
+해당 인스턴스에는 아무런 프로퍼티가 없이 메서드만 상속받는 형태가 된다.
+
+</br>
+
+그 상태에서 Employee 의 prototype 과 Bridge 의 인스턴스를 연결하는 구조로 만들어보도록 한다.
+
+</br>
+
+위의 구조를 코드를 통해 살펴본다.
+
+</br>
+
+```js
+function Person(name, age) {
+  this.name = name || "이름없음";
+  this.age = age || "나이모름";
+}
+
+Person.prototype.getName = function () {
+  return this.name;
+};
+
+Person.prototype.getAge = function () {
+  return this.age;
+};
+
+function Employee(name, age, position) {
+  this.name = name || "이름없음";
+  this.age = age || "나이모름";
+  this.position = position || "직책모름";
+}
+```
+
+</br>
+
+위의 코드 내용은 같으나 아래 코드 부분이 달라지게 된다.
+
+</br>
+
+```js
+function Bridge() {}
+Bridge.prototype = Person.prototype;
+Employee.prototype = new Bridge();
+Employee.prototype.constructor = Employee;
+
+Employee.prototype.getPosition = function () {
+  return this.position;
+};
+```
+
+```js
+var sue = new Employee("수", 100, "dev");
+console.dir(sue);
+```
+
+</br>
+
+이 상태로 인스턴스를 생성하면 아래와 같이 깔끔한 결과가 나온다.
+
+</br>
+
+![img-22](./img/img-22.png)
+
+</br>
+
+Bridge 라는 생성자 함수 매개체를 이용해서 Person 의 인스턴스와의 연결 관계를 끊음으로써
+
+</br>
+
+프로퍼티 체인 상에 불필요한 프로퍼티 (e.g. - name, age) 가 생성되지 않게 된 것이다.
+
+</br>
+
+## However
+
+</br>
+
+이 기능은 ES5 시스템에서 클래스 상속을 구현하는데에 상당히 자주 등장하는 패턴이거니와
+
+Bridge 라는 함수는 매개체 역할만 할 뿐 실제 코드 상에 영향을 주는 함수가 아니기에
+
+더글라스 크락포드 라는 분께서는 아래와 같이 함수화 시켜서 활용할 것을 추천하고 있다.
+
+</br>
+
+```js
+var extendClass = (function () {
+  function Bridge() {}
+  return function (Parent, Child) {
+    Bridge.prototype = Parent.prototype;
+    Child.prototype = new Bridge();
+    Child.prototype.constructor = Child;
+  };
+})();
+```
+
+클로저를 이용하여 `(function () {`, `return`, `})();`
+
+</br>
+
+Bridge 생성자 함수는 단 한 번만 생성하고 계속 재활용을 하고, `function Bridge() {}`
+
+</br>
+
+super 와 sub 클래스로 쓰일 생성자 함수를 매개변수로 넘겨주면 `Parent`, `Child`
+
+</br>
+
+자동으로 둘 사이의 상속 구조를 연결해주는 함수이다.
