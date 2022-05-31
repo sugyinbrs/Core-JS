@@ -567,3 +567,225 @@ super 와 sub 클래스로 쓰일 생성자 함수를 매개변수로 넘겨주�
 </br>
 
 자동으로 둘 사이의 상속 구조를 연결해주는 함수이다.
+
+</br>
+
+이를 활용하면 아래와 같이 보다 간단한 형태로 상속을 구현할 수 있다.
+
+</br>
+
+```js
+var extendClass = (function () {
+  function Bridge() {}
+  return function (Parent, Child) {
+    Bridge.prototype = Parent.prototype;
+    Child.prototype = new Bridge();
+    Child.prototype.constructor = Child;
+  };
+})();
+
+extendClass(Person, Employee);
+
+Employee.prototype.getPosition = function () {
+  return this.position;
+};
+
+var sue = new Employee("수", 100, "dev");
+console.dir(sue);
+```
+
+</br>
+
+extendClass 라는 함수는 전체 자바스크립트 코드상에 단 한 번만 구현해두면 되며,
+
+</br>
+
+이후로는 복잡한 과정을 매번 떠올릴 필요 없이 extendClass 라는 함수를 호출해주기만 하면 된다.
+
+</br>
+
+그리고 지금까지는 메서드만 살펴보았지만 인스턴스의 value 들 역시 상속 구조를 구현하면 간단한 구현이 가능하다.
+
+</br>
+
+Person 의 인스턴스와 Employee 의 인스턴스 모두 name, age 라는 똑같은 프로퍼티를 가지는데
+
+</br>
+
+하위 클래스에서 아래와 같이 변경해주면 더욱 편리하게 name, age 프로퍼티를 구현할 수 있으면 편할 것이다.
+
+</br>
+
+```js
+function Person(name, age) {
+  this.name = name || "이름없음";
+  this.age = age || "나이모름";
+}
+
+Person.prototype.getName = function () {
+  return this.name;
+};
+
+Person.prototype.getAge = function () {
+  return this.age;
+};
+
+function Employee(name, age, position) {
+  this.superClass(name, age); // 변경
+  this.position = position || "직책모름";
+}
+```
+
+    this.superClass(name, age) 에서
+
+    생성자 함수 this 는 아래 코드에서 볼 수 있는 sue 라는 Employee 라는 인스턴스를 가리킴
+
+    해당 인스턴스(sue)에는 'superClass' 라고 하는 메서드가 없으니
+
+    프로토타입 체이닝을 타고 Employee.prototype 내부에서
+
+    'superClass' 메서드를 검색할 것이며 존재하니 해당 메서드를 실행할 것
+
+    'superClass' 메서드에는 Parent, 즉 Person 이 연결 되어 있으니
+
+    Person 생성자 함수가 호출됨
+
+    이 때 this.superClass(name, age); 를 호출한 것이기에 메서드(. 앞)로써 호출될 것임
+
+    superClass 앞의 this 즉, 원래의 this 인 Employee 인스턴스인 sue 가 그대로 this 가 됨
+
+
+    따라서 this.superClass 메서드를 호출하면
+
+    Employee 의 인스턴스인 name 프로퍼티, age 프로퍼티에 각각 값을 할당하라는 명령이 됨
+
+</br>
+
+```js
+var extendClass = (function () {
+  function Bridge() {}
+  return function (Parent, Child) {
+    Bridge.prototype = Parent.prototype;
+    Child.prototype = new Bridge();
+    Child.prototype.constructor = Child;
+    Child.prototype.superClass = Parent; // 코드 추가
+  };
+})();
+
+extendClass(Person, Employee);
+
+Employee.prototype.getPosition = function () {
+  return this.position;
+};
+
+var sue = new Employee("수", 100, "dev");
+console.dir(sue);
+```
+
+</br>
+</br>
+
+최종적으로 코드를 정리하면 아래와 같다.
+
+</br>
+
+```js
+var extendClass = (function () {
+  function Bridge() {}
+  return function (Parent, Child) {
+    Bridge.prototype = Parent.prototype;
+    Child.prototype = new Bridge();
+    Child.prototype.constructor = Child;
+    Child.prototype.superClass = Parent;
+  };
+})();
+
+function Person(name, age) {
+  this.name = name || "이름없음";
+  this.age = age || "나이모름";
+}
+
+Person.prototype.getName = function () {
+  return this.name;
+};
+
+Person.prototype.getAge = function () {
+  return this.age;
+};
+
+function Employee(name, age, position) {
+  this.superClass(name, age);
+  this.position = position || "직책모름";
+}
+extendClass(Person, Employee);
+
+Employee.prototype.getPosition = function () {
+  return this.position;
+};
+```
+
+    클래스 상속을 구현하기 위한 extendClass 함수는 위쪽에 정의되어 있고,
+
+    실제 superclass 와 subclass 의 구체적인 내용을 아래 부분에서 적어 놓음
+
+</br>
+
+또한 위의 코드에서 지금까지 배운 모든 내용이 다 스며들어 있다.
+
+</br>
+
+a) 참조형 데이터가 정보를 저장하는 법
+
+b) 참조형 데이터를 저장했던 변수에 다른 데이터를 할당하는 것에 따른 결과
+
+c) 스코프, 실행컨텍스트
+
+d) this 바인딩
+
+e) 클로저의 원리
+
+f) 프로토타입과 프로토타입 체이닝 등등
+
+</br>
+</br>
+
+그런데 위의 코드 또한 ECMAScript6 가 나온 후에는 더욱 간단하게 작성할 수 있다.
+
+</br>
+
+ES6 에서는 extendClass 라는 함수를 직접 만들어서 구현하지 않아도
+
+</br>
+
+자바스크립트 내장 명령으로 손쉽게 클래스 상속을 구현할 수 있다.
+
+</br>
+
+class Person 을 만들고, Employee 는 Person 을 extends 해주기만 하면 된다.
+
+</br>
+
+```js
+class Person {
+  constructor(name, age) {
+    this.name = name || "이름없음";
+    this.age = age || "나이모름";
+  }
+  getName() {
+    return this.name;
+  }
+  getAge() {
+    return this.age;
+  }
+}
+
+class Employee extends Person {
+  constructor(name, age, position) {
+    super(name, age);
+    this.position = position || "직책모름";
+  }
+  getPosition() {
+    return this.position;
+  }
+}
+```
